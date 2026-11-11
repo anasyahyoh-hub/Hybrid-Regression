@@ -1,0 +1,23 @@
+{
+  "metrics": [
+    {
+      "model": "Hybrid K-Means + Local OLS",
+      "MSE": 0.18472653919514548,
+      "RMSE": 0.42979825406246763,
+      "R2": 0.9739265785283076,
+      "MSE_improvement_vs_global_pct": 92.6978733792144
+    },
+    {
+      "model": "Global polynomial OLS",
+      "MSE": 2.5297635714686035,
+      "RMSE": 1.5905230496502096,
+      "R2": 0.6429338626164858,
+      "MSE_improvement_vs_global_pct": 0.0
+    }
+  ],
+  "global_coefficients": {
+    "intercept": -0.2857226961094901,
+    "x^1": 0.674123955843452,
+    "x^2": 0.0312448727203238
+  }
+}

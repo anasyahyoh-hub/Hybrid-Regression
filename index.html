@@ -1,0 +1,822 @@
+<!doctype html>
+<html lang="th">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Anton+SC&family=Antonio:wght@100..700&family=Noto+Sans+Thai:wght@100..900&display=swap"
+    rel="stylesheet">
+  <meta name="theme-color" content="#f1f7ff">
+  <meta name="description"
+    content="เว็บไซต์แนะนำโครงงานแบบจำลองถดถอยผสม K-Means และ Local OLS เปรียบเทียบกับ Global OLS ด้วยข้อมูลสังเคราะห์ 450 ตัวอย่าง">
+  <title>แบบจำลองถดถอยผสม</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="wrap nav">
+      <a class="brand" href="#top" aria-label="กลับไปด้านบน">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none">
+            <path d="M4 18.5h16M5.5 16l4-4 3.2 2.5 5.8-7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+            <circle cx="18.5" cy="7.5" r="1.5" fill="currentColor" />
+          </svg></span>
+        <span>แบบจำลองถดถอยผสม</span>
+      </a>
+      <nav class="nav-links" aria-label="เมนูหลัก">
+        <a href="#results">ผลการทดลอง</a>
+        <a href="#method">วิธีทำงาน</a>
+        <a href="#interpretation">ข้อควรรู้</a>
+        <a class="nav-cta" href="#files">โครงงาน</a>
+      </nav>
+      <details class="mobile-menu">
+        <summary>
+          <span class="hamburger-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span class="sr-only">เมนูนำทาง</span>
+        </summary>
+        <nav class="mobile-menu-panel" aria-label="เมนูนำทางบนมือถือ">
+          <a href="#results">ผลการทดลอง</a>
+          <a href="#method">วิธีทำงาน</a>
+          <a href="#interpretation">ข้อควรรู้</a>
+          <a class="mobile-menu-cta" href="#files">ดูไฟล์โครงงาน</a>
+        </nav>
+      </details>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="eyebrow">โครงงานวิเคราะห์ข้อมูล · แบบจำลองถดถอย</p>
+          <h1>เมื่อรูปแบบข้อมูลเปลี่ยน<br><em>สมการก็ควรเปลี่ยนตาม</em></h1>
+          <p class="hero-copy">ลองเปรียบเทียบสมการเดียวที่ครอบคลุมข้อมูลทั้งหมด
+            กับสมการย่อยที่เรียนรู้จากข้อมูลแต่ละช่วง โครงงานนี้ใช้ K-Means แบ่งบริเวณ แล้วให้ Local OLS
+            อธิบายแนวโน้มของแต่ละบริเวณ</p>
+          <div class="hero-actions">
+            <a class="button" href="#results">ดูผลการทดลอง <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg></a>
+            <a class="button secondary" href="#method">เข้าใจวิธีทำงาน</a>
+          </div>
+          <div class="hero-facts" aria-label="รายละเอียดการทดลอง">
+            <span>ข้อมูลสังเคราะห์ 450 ตัวอย่าง</span>
+            <span>แบ่ง train/test 70/30</span>
+            <span>ใช้ตัวแปร x หนึ่งตัว</span>
+          </div>
+        </div>
+        <div class="hero-art" aria-label="ภาพแนวคิด: เส้นแนวโน้มข้อมูลสามช่วงและสมการเดียว">
+          <div class="art-top"><span class="art-label">ภาพแนวคิดของแบบจำลอง</span><span class="art-pill">3
+              ช่วงข้อมูล</span></div>
+          <svg class="concept-chart" viewBox="0 0 500 245" role="img"
+            aria-label="จุดข้อมูลกับเส้นโค้งเฉพาะช่วงสามเส้น เปรียบเทียบเส้นเดียว">
+            <g stroke="#c7d8d1" stroke-width="1">
+              <path d="M34 25v183M34 208h436" />
+              <path d="M34 60h436M34 100h436M34 140h436M34 180h436" stroke-dasharray="3 6" />
+            </g>
+            <g fill="#82a9a0" opacity=".75">
+              <circle cx="53" cy="78" r="4" />
+              <circle cx="69" cy="105" r="4" />
+              <circle cx="84" cy="127" r="4" />
+              <circle cx="102" cy="150" r="4" />
+              <circle cx="123" cy="169" r="4" />
+              <circle cx="145" cy="177" r="4" />
+              <circle cx="169" cy="177" r="4" />
+              <circle cx="191" cy="166" r="4" />
+              <circle cx="211" cy="147" r="4" />
+              <circle cx="231" cy="125" r="4" />
+              <circle cx="251" cy="100" r="4" />
+              <circle cx="275" cy="78" r="4" />
+              <circle cx="298" cy="64" r="4" />
+              <circle cx="321" cy="57" r="4" />
+              <circle cx="345" cy="62" r="4" />
+              <circle cx="367" cy="76" r="4" />
+              <circle cx="389" cy="100" r="4" />
+              <circle cx="411" cy="132" r="4" />
+              <circle cx="434" cy="160" r="4" />
+            </g>
+            <path d="M46 65 Q97 172 161 184" fill="none" stroke="#c76b3b" stroke-width="4" stroke-linecap="round" />
+            <path d="M161 184 Q218 185 260 95" fill="none" stroke="#4b7e9b" stroke-width="4" stroke-linecap="round" />
+            <path d="M260 95 Q336 24 449 177" fill="none" stroke="#6d9474" stroke-width="4" stroke-linecap="round" />
+            <path d="M46 146 Q244 124 449 87" fill="none" stroke="#d94b47" stroke-width="3" stroke-dasharray="8 7"
+              opacity=".85" />
+            <text x="40" y="231" font-size="11" fill="#65807a">x: ตำแหน่งข้อมูล</text>
+          </svg>
+          <p class="art-note"><strong>แนวคิดหลัก</strong> แทนที่จะฝืนใช้เส้นเดียว
+            ให้แต่ละช่วงมีสมการที่เหมาะกับรูปทรงของตัวเอง</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section white" id="results">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="section-kicker">ผลการทดลอง</p>
+          <h2>ในชุดข้อมูลนี้ สมการเฉพาะช่วงคลาดเคลื่อนน้อยกว่า</h2>
+          <p>ประเมินด้วยข้อมูลทดสอบ 135 ตัวอย่างที่แบบจำลองไม่เคยเห็นระหว่างการฝึก</p>
+        </div>
+        <div class="result-band">
+          <article class="result-highlight">
+            <p class="small-label">MSE ลดลงเมื่อเทียบกับ Global OLS</p>
+            <p class="big-number">92.7<span class="percent">%</span></p>
+            <p>Hybrid K-Means + Local OLS ติดตามรูปทรงข้อมูลที่เปลี่ยนไปตามช่วงได้ดีกว่าในตัวอย่างสาธิตนี้</p>
+          </article>
+          <div class="metric-stack" aria-label="คะแนนของแบบจำลองผสม">
+            <article class="metric">
+              <div class="metric-head"><span class="metric-name">MSE · ค่าคลาดเคลื่อนกำลังสองเฉลี่ย</span><strong
+                  class="metric-value">0.1847</strong></div>
+              <p class="metric-desc">ยิ่งต่ำยิ่งดี · Global OLS ได้ 2.5298</p>
+            </article>
+            <article class="metric">
+              <div class="metric-head"><span class="metric-name">RMSE · ค่าคลาดเคลื่อนในหน่วย y</span><strong
+                  class="metric-value">0.4298</strong></div>
+              <p class="metric-desc">ยิ่งต่ำยิ่งดี · Global OLS ได้ 1.5905</p>
+            </article>
+            <article class="metric">
+              <div class="metric-head"><span class="metric-name">R² · สัดส่วนความแปรปรวนที่อธิบายได้</span><strong
+                  class="metric-value">0.9739</strong></div>
+              <p class="metric-desc">ยิ่งใกล้ 1 ยิ่งดี · Global OLS ได้ 0.6429</p>
+            </article>
+          </div>
+        </div>
+        <figure class="chart-card">
+          <div class="chart-topline"><strong>มองเห็นความต่างของเส้นแนวโน้ม</strong><span>ข้อมูลฝึกและข้อมูลทดสอบ · แกน x
+              และ y เป็นข้อมูลสังเคราะห์</span></div>
+          <div class="chart-visual">
+            <svg class="mobile-trend-chart" viewBox="0 0 360 202.5" role="img" aria-labelledby="mobile-chart-title mobile-chart-desc" xmlns="http://www.w3.org/2000/svg">
+            <title id="mobile-chart-title">กราฟแนวโน้มแบบจำลองในอัตราส่วน 16 ต่อ 9</title>
+            <desc id="mobile-chart-desc">จุดข้อมูลสังเคราะห์ 450 จุด พร้อมเส้น Local OLS สามช่วงและเส้น Global OLS</desc>
+            <defs><clipPath id="mobile-chart-clip"><rect x="43" y="24" width="309" height="142" /></clipPath></defs>
+            <text class="chart-title" x="43" y="15">จุดข้อมูลและเส้นทำนาย</text>
+            <line class="chart-grid" x1="43.00" y1="151.80" x2="352.00" y2="151.80" />
+            <text class="chart-tick" x="37.00" y="155.30" text-anchor="end">-4</text>
+            <line class="chart-grid" x1="43.00" y1="123.40" x2="352.00" y2="123.40" />
+            <text class="chart-tick" x="37.00" y="126.90" text-anchor="end">-2</text>
+            <line class="chart-grid" x1="43.00" y1="95.00" x2="352.00" y2="95.00" />
+            <text class="chart-tick" x="37.00" y="98.50" text-anchor="end">0</text>
+            <line class="chart-grid" x1="43.00" y1="66.60" x2="352.00" y2="66.60" />
+            <text class="chart-tick" x="37.00" y="70.10" text-anchor="end">2</text>
+            <line class="chart-grid" x1="43.00" y1="38.20" x2="352.00" y2="38.20" />
+            <text class="chart-tick" x="37.00" y="41.70" text-anchor="end">4</text>
+            <line class="chart-grid" x1="43.00" y1="24.00" x2="43.00" y2="166.00" />
+            <text class="chart-tick" x="43.00" y="178" text-anchor="middle">-6</text>
+            <line class="chart-grid" x1="120.25" y1="24.00" x2="120.25" y2="166.00" />
+            <text class="chart-tick" x="120.25" y="178" text-anchor="middle">-3</text>
+            <line class="chart-grid" x1="197.50" y1="24.00" x2="197.50" y2="166.00" />
+            <text class="chart-tick" x="197.50" y="178" text-anchor="middle">0</text>
+            <line class="chart-grid" x1="274.75" y1="24.00" x2="274.75" y2="166.00" />
+            <text class="chart-tick" x="274.75" y="178" text-anchor="middle">3</text>
+            <line class="chart-grid" x1="352.00" y1="24.00" x2="352.00" y2="166.00" />
+            <text class="chart-tick" x="352.00" y="178" text-anchor="middle">6</text>
+            <line class="chart-axis" x1="43.00" y1="166.00" x2="352.00" y2="166.00" />
+            <line class="chart-axis" x1="43.00" y1="24.00" x2="43.00" y2="166.00" />
+            <text class="chart-axis-label" x="197.5" y="198" text-anchor="middle">ตัวแปร x</text>
+            <text class="chart-axis-label" x="12" y="95" text-anchor="middle" transform="rotate(-90 12 95)">ค่า y</text>
+            <g clip-path="url(#mobile-chart-clip)">
+            <circle class="chart-point" cx="44.68" cy="84.88" r="1.25" />
+            <circle class="chart-point" cx="45.27" cy="89.47" r="1.25" />
+            <circle class="chart-point" cx="46.80" cy="102.10" r="1.25" />
+            <circle class="chart-point" cx="47.31" cy="86.45" r="1.25" />
+            <circle class="chart-point" cx="48.51" cy="97.50" r="1.25" />
+            <circle class="chart-point" cx="49.53" cy="98.67" r="1.25" />
+            <circle class="chart-point" cx="49.68" cy="102.09" r="1.25" />
+            <circle class="chart-point" cx="50.02" cy="100.13" r="1.25" />
+            <circle class="chart-point" cx="50.05" cy="93.72" r="1.25" />
+            <circle class="chart-point" cx="50.68" cy="98.37" r="1.25" />
+            <circle class="chart-point" cx="51.96" cy="97.20" r="1.25" />
+            <circle class="chart-point" cx="52.52" cy="97.84" r="1.25" />
+            <circle class="chart-point" cx="54.17" cy="94.52" r="1.25" />
+            <circle class="chart-point" cx="54.56" cy="105.00" r="1.25" />
+            <circle class="chart-point" cx="55.41" cy="112.96" r="1.25" />
+            <circle class="chart-point" cx="55.86" cy="98.42" r="1.25" />
+            <circle class="chart-point" cx="56.43" cy="107.56" r="1.25" />
+            <circle class="chart-point" cx="56.54" cy="99.07" r="1.25" />
+            <circle class="chart-point" cx="56.88" cy="103.91" r="1.25" />
+            <circle class="chart-point" cx="58.22" cy="108.79" r="1.25" />
+            <circle class="chart-point" cx="58.96" cy="106.92" r="1.25" />
+            <circle class="chart-point" cx="59.06" cy="97.49" r="1.25" />
+            <circle class="chart-point" cx="59.50" cy="97.31" r="1.25" />
+            <circle class="chart-point" cx="59.84" cy="109.74" r="1.25" />
+            <circle class="chart-point" cx="60.12" cy="109.56" r="1.25" />
+            <circle class="chart-point" cx="60.68" cy="104.82" r="1.25" />
+            <circle class="chart-point" cx="61.02" cy="116.71" r="1.25" />
+            <circle class="chart-point" cx="62.72" cy="111.82" r="1.25" />
+            <circle class="chart-point" cx="63.57" cy="114.99" r="1.25" />
+            <circle class="chart-point" cx="68.56" cy="118.74" r="1.25" />
+            <circle class="chart-point" cx="69.09" cy="126.16" r="1.25" />
+            <circle class="chart-point" cx="69.11" cy="130.69" r="1.25" />
+            <circle class="chart-point" cx="70.08" cy="134.61" r="1.25" />
+            <circle class="chart-point" cx="70.10" cy="128.93" r="1.25" />
+            <circle class="chart-point" cx="70.82" cy="125.77" r="1.25" />
+            <circle class="chart-point" cx="70.95" cy="124.91" r="1.25" />
+            <circle class="chart-point" cx="72.10" cy="112.79" r="1.25" />
+            <circle class="chart-point" cx="72.19" cy="117.84" r="1.25" />
+            <circle class="chart-point" cx="72.37" cy="130.35" r="1.25" />
+            <circle class="chart-point" cx="72.38" cy="122.55" r="1.25" />
+            <circle class="chart-point" cx="72.78" cy="127.46" r="1.25" />
+            <circle class="chart-point" cx="73.63" cy="127.56" r="1.25" />
+            <circle class="chart-point" cx="74.42" cy="125.52" r="1.25" />
+            <circle class="chart-point" cx="74.95" cy="123.44" r="1.25" />
+            <circle class="chart-point" cx="75.53" cy="129.70" r="1.25" />
+            <circle class="chart-point" cx="75.72" cy="121.51" r="1.25" />
+            <circle class="chart-point" cx="75.88" cy="134.82" r="1.25" />
+            <circle class="chart-point" cx="76.29" cy="128.34" r="1.25" />
+            <circle class="chart-point" cx="76.55" cy="113.12" r="1.25" />
+            <circle class="chart-point" cx="76.73" cy="127.44" r="1.25" />
+            <circle class="chart-point" cx="77.17" cy="120.63" r="1.25" />
+            <circle class="chart-point" cx="78.39" cy="129.70" r="1.25" />
+            <circle class="chart-point" cx="78.69" cy="127.04" r="1.25" />
+            <circle class="chart-point" cx="79.19" cy="131.27" r="1.25" />
+            <circle class="chart-point" cx="79.46" cy="132.18" r="1.25" />
+            <circle class="chart-point" cx="79.61" cy="135.93" r="1.25" />
+            <circle class="chart-point" cx="80.00" cy="129.04" r="1.25" />
+            <circle class="chart-point" cx="80.65" cy="137.22" r="1.25" />
+            <circle class="chart-point" cx="80.67" cy="128.19" r="1.25" />
+            <circle class="chart-point" cx="80.93" cy="125.90" r="1.25" />
+            <circle class="chart-point" cx="81.24" cy="130.43" r="1.25" />
+            <circle class="chart-point" cx="81.60" cy="134.61" r="1.25" />
+            <circle class="chart-point" cx="82.59" cy="130.96" r="1.25" />
+            <circle class="chart-point" cx="83.15" cy="135.93" r="1.25" />
+            <circle class="chart-point" cx="83.50" cy="128.78" r="1.25" />
+            <circle class="chart-point" cx="83.73" cy="145.45" r="1.25" />
+            <circle class="chart-point" cx="83.82" cy="136.60" r="1.25" />
+            <circle class="chart-point" cx="84.58" cy="147.02" r="1.25" />
+            <circle class="chart-point" cx="85.46" cy="144.69" r="1.25" />
+            <circle class="chart-point" cx="86.18" cy="128.14" r="1.25" />
+            <circle class="chart-point" cx="86.19" cy="130.94" r="1.25" />
+            <circle class="chart-point" cx="86.20" cy="140.57" r="1.25" />
+            <circle class="chart-point" cx="86.34" cy="145.34" r="1.25" />
+            <circle class="chart-point" cx="86.36" cy="154.07" r="1.25" />
+            <circle class="chart-point" cx="87.19" cy="140.19" r="1.25" />
+            <circle class="chart-point" cx="87.46" cy="122.68" r="1.25" />
+            <circle class="chart-point" cx="87.46" cy="134.53" r="1.25" />
+            <circle class="chart-point" cx="87.66" cy="140.59" r="1.25" />
+            <circle class="chart-point" cx="88.17" cy="134.80" r="1.25" />
+            <circle class="chart-point" cx="88.67" cy="147.20" r="1.25" />
+            <circle class="chart-point" cx="90.06" cy="140.51" r="1.25" />
+            <circle class="chart-point" cx="90.36" cy="138.32" r="1.25" />
+            <circle class="chart-point" cx="90.47" cy="139.49" r="1.25" />
+            <circle class="chart-point" cx="90.68" cy="134.38" r="1.25" />
+            <circle class="chart-point" cx="90.96" cy="137.20" r="1.25" />
+            <circle class="chart-point" cx="91.70" cy="135.69" r="1.25" />
+            <circle class="chart-point" cx="92.83" cy="144.39" r="1.25" />
+            <circle class="chart-point" cx="93.86" cy="135.45" r="1.25" />
+            <circle class="chart-point" cx="94.15" cy="131.23" r="1.25" />
+            <circle class="chart-point" cx="94.59" cy="146.95" r="1.25" />
+            <circle class="chart-point" cx="95.71" cy="146.99" r="1.25" />
+            <circle class="chart-point" cx="95.93" cy="133.82" r="1.25" />
+            <circle class="chart-point" cx="96.96" cy="143.39" r="1.25" />
+            <circle class="chart-point" cx="97.62" cy="134.15" r="1.25" />
+            <circle class="chart-point" cx="98.39" cy="145.47" r="1.25" />
+            <circle class="chart-point" cx="99.08" cy="134.42" r="1.25" />
+            <circle class="chart-point" cx="101.55" cy="143.17" r="1.25" />
+            <circle class="chart-point" cx="102.65" cy="142.75" r="1.25" />
+            <circle class="chart-point" cx="103.14" cy="135.10" r="1.25" />
+            <circle class="chart-point" cx="103.70" cy="146.75" r="1.25" />
+            <circle class="chart-point" cx="104.25" cy="150.34" r="1.25" />
+            <circle class="chart-point" cx="104.73" cy="147.53" r="1.25" />
+            <circle class="chart-point" cx="104.77" cy="142.17" r="1.25" />
+            <circle class="chart-point" cx="105.35" cy="154.34" r="1.25" />
+            <circle class="chart-point" cx="105.53" cy="141.24" r="1.25" />
+            <circle class="chart-point" cx="105.54" cy="148.26" r="1.25" />
+            <circle class="chart-point" cx="109.31" cy="138.88" r="1.25" />
+            <circle class="chart-point" cx="113.11" cy="160.35" r="1.25" />
+            <circle class="chart-point" cx="113.22" cy="150.77" r="1.25" />
+            <circle class="chart-point" cx="113.96" cy="156.16" r="1.25" />
+            <circle class="chart-point" cx="114.14" cy="151.04" r="1.25" />
+            <circle class="chart-point" cx="114.86" cy="144.64" r="1.25" />
+            <circle class="chart-point" cx="114.89" cy="147.19" r="1.25" />
+            <circle class="chart-point" cx="115.29" cy="147.63" r="1.25" />
+            <circle class="chart-point" cx="116.13" cy="147.06" r="1.25" />
+            <circle class="chart-point" cx="116.15" cy="144.89" r="1.25" />
+            <circle class="chart-point" cx="116.71" cy="152.10" r="1.25" />
+            <circle class="chart-point" cx="117.42" cy="141.84" r="1.25" />
+            <circle class="chart-point" cx="117.46" cy="142.10" r="1.25" />
+            <circle class="chart-point" cx="119.58" cy="143.59" r="1.25" />
+            <circle class="chart-point" cx="120.06" cy="142.51" r="1.25" />
+            <circle class="chart-point" cx="121.30" cy="143.90" r="1.25" />
+            <circle class="chart-point" cx="122.09" cy="133.41" r="1.25" />
+            <circle class="chart-point" cx="124.10" cy="145.69" r="1.25" />
+            <circle class="chart-point" cx="125.15" cy="146.76" r="1.25" />
+            <circle class="chart-point" cx="125.34" cy="149.38" r="1.25" />
+            <circle class="chart-point" cx="125.50" cy="151.00" r="1.25" />
+            <circle class="chart-point" cx="126.60" cy="151.99" r="1.25" />
+            <circle class="chart-point" cx="126.66" cy="149.85" r="1.25" />
+            <circle class="chart-point" cx="127.12" cy="144.84" r="1.25" />
+            <circle class="chart-point" cx="129.90" cy="141.55" r="1.25" />
+            <circle class="chart-point" cx="129.95" cy="143.22" r="1.25" />
+            <circle class="chart-point" cx="130.73" cy="147.81" r="1.25" />
+            <circle class="chart-point" cx="130.98" cy="137.78" r="1.25" />
+            <circle class="chart-point" cx="131.51" cy="138.54" r="1.25" />
+            <circle class="chart-point" cx="132.04" cy="143.69" r="1.25" />
+            <circle class="chart-point" cx="132.09" cy="146.61" r="1.25" />
+            <circle class="chart-point" cx="132.89" cy="139.12" r="1.25" />
+            <circle class="chart-point" cx="133.72" cy="140.91" r="1.25" />
+            <circle class="chart-point" cx="134.27" cy="150.43" r="1.25" />
+            <circle class="chart-point" cx="134.73" cy="141.98" r="1.25" />
+            <circle class="chart-point" cx="135.99" cy="139.42" r="1.25" />
+            <circle class="chart-point" cx="136.17" cy="146.26" r="1.25" />
+            <circle class="chart-point" cx="136.30" cy="139.70" r="1.25" />
+            <circle class="chart-point" cx="136.92" cy="149.19" r="1.25" />
+            <circle class="chart-point" cx="137.54" cy="132.22" r="1.25" />
+            <circle class="chart-point" cx="138.89" cy="132.01" r="1.25" />
+            <circle class="chart-point" cx="138.89" cy="140.96" r="1.25" />
+            <circle class="chart-point" cx="139.52" cy="136.93" r="1.25" />
+            <circle class="chart-point" cx="140.16" cy="153.09" r="1.25" />
+            <circle class="chart-point" cx="140.62" cy="145.34" r="1.25" />
+            <circle class="chart-point" cx="141.00" cy="139.97" r="1.25" />
+            <circle class="chart-point" cx="141.26" cy="144.45" r="1.25" />
+            <circle class="chart-point" cx="143.68" cy="132.24" r="1.25" />
+            <circle class="chart-point" cx="144.20" cy="124.24" r="1.25" />
+            <circle class="chart-point" cx="144.46" cy="142.98" r="1.25" />
+            <circle class="chart-point" cx="144.93" cy="140.64" r="1.25" />
+            <circle class="chart-point" cx="145.45" cy="133.86" r="1.25" />
+            <circle class="chart-point" cx="146.09" cy="95.37" r="1.25" />
+            <circle class="chart-point" cx="150.18" cy="113.83" r="1.25" />
+            <circle class="chart-point" cx="152.55" cy="105.84" r="1.25" />
+            <circle class="chart-point" cx="154.80" cy="97.14" r="1.25" />
+            <circle class="chart-point" cx="155.54" cy="118.05" r="1.25" />
+            <circle class="chart-point" cx="156.22" cy="116.02" r="1.25" />
+            <circle class="chart-point" cx="156.56" cy="111.00" r="1.25" />
+            <circle class="chart-point" cx="157.47" cy="111.80" r="1.25" />
+            <circle class="chart-point" cx="157.58" cy="103.88" r="1.25" />
+            <circle class="chart-point" cx="157.61" cy="107.29" r="1.25" />
+            <circle class="chart-point" cx="158.45" cy="119.51" r="1.25" />
+            <circle class="chart-point" cx="158.46" cy="105.86" r="1.25" />
+            <circle class="chart-point" cx="158.62" cy="112.41" r="1.25" />
+            <circle class="chart-point" cx="159.30" cy="101.51" r="1.25" />
+            <circle class="chart-point" cx="160.25" cy="113.06" r="1.25" />
+            <circle class="chart-point" cx="160.74" cy="113.20" r="1.25" />
+            <circle class="chart-point" cx="161.45" cy="106.31" r="1.25" />
+            <circle class="chart-point" cx="161.99" cy="105.09" r="1.25" />
+            <circle class="chart-point" cx="162.73" cy="107.09" r="1.25" />
+            <circle class="chart-point" cx="164.63" cy="120.10" r="1.25" />
+            <circle class="chart-point" cx="165.85" cy="106.99" r="1.25" />
+            <circle class="chart-point" cx="168.57" cy="116.63" r="1.25" />
+            <circle class="chart-point" cx="169.24" cy="109.10" r="1.25" />
+            <circle class="chart-point" cx="170.48" cy="119.06" r="1.25" />
+            <circle class="chart-point" cx="171.48" cy="107.95" r="1.25" />
+            <circle class="chart-point" cx="171.63" cy="115.43" r="1.25" />
+            <circle class="chart-point" cx="171.82" cy="118.27" r="1.25" />
+            <circle class="chart-point" cx="172.35" cy="106.38" r="1.25" />
+            <circle class="chart-point" cx="172.51" cy="109.20" r="1.25" />
+            <circle class="chart-point" cx="174.60" cy="114.30" r="1.25" />
+            <circle class="chart-point" cx="176.52" cy="101.93" r="1.25" />
+            <circle class="chart-point" cx="177.44" cy="113.16" r="1.25" />
+            <circle class="chart-point" cx="177.95" cy="110.31" r="1.25" />
+            <circle class="chart-point" cx="178.08" cy="108.89" r="1.25" />
+            <circle class="chart-point" cx="178.31" cy="114.17" r="1.25" />
+            <circle class="chart-point" cx="178.61" cy="107.65" r="1.25" />
+            <circle class="chart-point" cx="178.62" cy="113.64" r="1.25" />
+            <circle class="chart-point" cx="179.68" cy="112.82" r="1.25" />
+            <circle class="chart-point" cx="180.01" cy="102.21" r="1.25" />
+            <circle class="chart-point" cx="180.86" cy="116.45" r="1.25" />
+            <circle class="chart-point" cx="181.85" cy="124.52" r="1.25" />
+            <circle class="chart-point" cx="182.17" cy="100.49" r="1.25" />
+            <circle class="chart-point" cx="183.25" cy="94.74" r="1.25" />
+            <circle class="chart-point" cx="183.38" cy="112.34" r="1.25" />
+            <circle class="chart-point" cx="183.83" cy="121.41" r="1.25" />
+            <circle class="chart-point" cx="184.69" cy="111.57" r="1.25" />
+            <circle class="chart-point" cx="184.80" cy="111.41" r="1.25" />
+            <circle class="chart-point" cx="185.72" cy="110.68" r="1.25" />
+            <circle class="chart-point" cx="186.01" cy="116.13" r="1.25" />
+            <circle class="chart-point" cx="186.99" cy="105.84" r="1.25" />
+            <circle class="chart-point" cx="187.22" cy="106.13" r="1.25" />
+            <circle class="chart-point" cx="187.42" cy="118.12" r="1.25" />
+            <circle class="chart-point" cx="188.09" cy="104.90" r="1.25" />
+            <circle class="chart-point" cx="188.57" cy="96.72" r="1.25" />
+            <circle class="chart-point" cx="189.31" cy="107.77" r="1.25" />
+            <circle class="chart-point" cx="189.99" cy="110.64" r="1.25" />
+            <circle class="chart-point" cx="190.66" cy="109.31" r="1.25" />
+            <circle class="chart-point" cx="191.13" cy="104.67" r="1.25" />
+            <circle class="chart-point" cx="191.60" cy="118.54" r="1.25" />
+            <circle class="chart-point" cx="192.03" cy="107.12" r="1.25" />
+            <circle class="chart-point" cx="193.38" cy="110.04" r="1.25" />
+            <circle class="chart-point" cx="193.97" cy="96.51" r="1.25" />
+            <circle class="chart-point" cx="194.63" cy="108.37" r="1.25" />
+            <circle class="chart-point" cx="195.08" cy="97.24" r="1.25" />
+            <circle class="chart-point" cx="195.64" cy="113.58" r="1.25" />
+            <circle class="chart-point" cx="197.73" cy="102.78" r="1.25" />
+            <circle class="chart-point" cx="197.82" cy="104.34" r="1.25" />
+            <circle class="chart-point" cx="198.90" cy="111.03" r="1.25" />
+            <circle class="chart-point" cx="198.90" cy="104.79" r="1.25" />
+            <circle class="chart-point" cx="199.46" cy="98.40" r="1.25" />
+            <circle class="chart-point" cx="201.89" cy="106.57" r="1.25" />
+            <circle class="chart-point" cx="202.15" cy="114.62" r="1.25" />
+            <circle class="chart-point" cx="203.33" cy="104.12" r="1.25" />
+            <circle class="chart-point" cx="203.89" cy="109.15" r="1.25" />
+            <circle class="chart-point" cx="204.49" cy="105.53" r="1.25" />
+            <circle class="chart-point" cx="204.84" cy="103.81" r="1.25" />
+            <circle class="chart-point" cx="207.01" cy="112.45" r="1.25" />
+            <circle class="chart-point" cx="207.61" cy="111.61" r="1.25" />
+            <circle class="chart-point" cx="208.45" cy="98.66" r="1.25" />
+            <circle class="chart-point" cx="208.65" cy="104.55" r="1.25" />
+            <circle class="chart-point" cx="213.87" cy="113.78" r="1.25" />
+            <circle class="chart-point" cx="214.06" cy="93.69" r="1.25" />
+            <circle class="chart-point" cx="214.20" cy="96.66" r="1.25" />
+            <circle class="chart-point" cx="214.37" cy="102.44" r="1.25" />
+            <circle class="chart-point" cx="214.45" cy="105.98" r="1.25" />
+            <circle class="chart-point" cx="214.56" cy="93.08" r="1.25" />
+            <circle class="chart-point" cx="215.12" cy="95.63" r="1.25" />
+            <circle class="chart-point" cx="215.80" cy="83.08" r="1.25" />
+            <circle class="chart-point" cx="217.57" cy="93.64" r="1.25" />
+            <circle class="chart-point" cx="217.66" cy="93.78" r="1.25" />
+            <circle class="chart-point" cx="218.74" cy="96.36" r="1.25" />
+            <circle class="chart-point" cx="219.51" cy="89.97" r="1.25" />
+            <circle class="chart-point" cx="219.66" cy="91.01" r="1.25" />
+            <circle class="chart-point" cx="219.88" cy="87.12" r="1.25" />
+            <circle class="chart-point" cx="221.98" cy="96.20" r="1.25" />
+            <circle class="chart-point" cx="222.55" cy="95.28" r="1.25" />
+            <circle class="chart-point" cx="222.57" cy="95.52" r="1.25" />
+            <circle class="chart-point" cx="223.49" cy="87.27" r="1.25" />
+            <circle class="chart-point" cx="224.58" cy="82.22" r="1.25" />
+            <circle class="chart-point" cx="224.77" cy="93.75" r="1.25" />
+            <circle class="chart-point" cx="225.33" cy="93.11" r="1.25" />
+            <circle class="chart-point" cx="225.59" cy="88.50" r="1.25" />
+            <circle class="chart-point" cx="225.66" cy="91.79" r="1.25" />
+            <circle class="chart-point" cx="226.45" cy="84.02" r="1.25" />
+            <circle class="chart-point" cx="226.68" cy="102.95" r="1.25" />
+            <circle class="chart-point" cx="227.18" cy="94.05" r="1.25" />
+            <circle class="chart-point" cx="228.21" cy="92.95" r="1.25" />
+            <circle class="chart-point" cx="228.27" cy="102.07" r="1.25" />
+            <circle class="chart-point" cx="229.36" cy="93.08" r="1.25" />
+            <circle class="chart-point" cx="230.23" cy="92.06" r="1.25" />
+            <circle class="chart-point" cx="230.26" cy="87.77" r="1.25" />
+            <circle class="chart-point" cx="231.97" cy="78.46" r="1.25" />
+            <circle class="chart-point" cx="232.84" cy="85.79" r="1.25" />
+            <circle class="chart-point" cx="233.40" cy="89.98" r="1.25" />
+            <circle class="chart-point" cx="233.44" cy="84.14" r="1.25" />
+            <circle class="chart-point" cx="236.84" cy="74.40" r="1.25" />
+            <circle class="chart-point" cx="237.67" cy="85.68" r="1.25" />
+            <circle class="chart-point" cx="237.76" cy="85.21" r="1.25" />
+            <circle class="chart-point" cx="238.18" cy="76.04" r="1.25" />
+            <circle class="chart-point" cx="238.57" cy="80.32" r="1.25" />
+            <circle class="chart-point" cx="238.90" cy="74.81" r="1.25" />
+            <circle class="chart-point" cx="239.13" cy="78.53" r="1.25" />
+            <circle class="chart-point" cx="239.86" cy="73.55" r="1.25" />
+            <circle class="chart-point" cx="240.63" cy="83.14" r="1.25" />
+            <circle class="chart-point" cx="241.53" cy="76.12" r="1.25" />
+            <circle class="chart-point" cx="241.95" cy="76.87" r="1.25" />
+            <circle class="chart-point" cx="243.80" cy="80.94" r="1.25" />
+            <circle class="chart-point" cx="243.89" cy="82.93" r="1.25" />
+            <circle class="chart-point" cx="244.45" cy="68.92" r="1.25" />
+            <circle class="chart-point" cx="244.65" cy="74.89" r="1.25" />
+            <circle class="chart-point" cx="245.79" cy="77.67" r="1.25" />
+            <circle class="chart-point" cx="246.28" cy="71.61" r="1.25" />
+            <circle class="chart-point" cx="246.76" cy="63.79" r="1.25" />
+            <circle class="chart-point" cx="247.45" cy="83.35" r="1.25" />
+            <circle class="chart-point" cx="247.53" cy="78.59" r="1.25" />
+            <circle class="chart-point" cx="247.83" cy="74.84" r="1.25" />
+            <circle class="chart-point" cx="248.27" cy="60.12" r="1.25" />
+            <circle class="chart-point" cx="248.44" cy="66.97" r="1.25" />
+            <circle class="chart-point" cx="248.70" cy="63.79" r="1.25" />
+            <circle class="chart-point" cx="249.54" cy="57.96" r="1.25" />
+            <circle class="chart-point" cx="249.97" cy="57.53" r="1.25" />
+            <circle class="chart-point" cx="250.41" cy="47.86" r="1.25" />
+            <circle class="chart-point" cx="250.72" cy="49.97" r="1.25" />
+            <circle class="chart-point" cx="252.40" cy="45.89" r="1.25" />
+            <circle class="chart-point" cx="253.34" cy="49.66" r="1.25" />
+            <circle class="chart-point" cx="253.89" cy="46.52" r="1.25" />
+            <circle class="chart-point" cx="254.06" cy="47.13" r="1.25" />
+            <circle class="chart-point" cx="254.89" cy="42.91" r="1.25" />
+            <circle class="chart-point" cx="255.00" cy="42.67" r="1.25" />
+            <circle class="chart-point" cx="257.53" cy="55.65" r="1.25" />
+            <circle class="chart-point" cx="257.69" cy="59.30" r="1.25" />
+            <circle class="chart-point" cx="258.16" cy="39.66" r="1.25" />
+            <circle class="chart-point" cx="258.49" cy="38.37" r="1.25" />
+            <circle class="chart-point" cx="258.72" cy="51.41" r="1.25" />
+            <circle class="chart-point" cx="259.21" cy="56.16" r="1.25" />
+            <circle class="chart-point" cx="259.38" cy="44.38" r="1.25" />
+            <circle class="chart-point" cx="260.90" cy="38.65" r="1.25" />
+            <circle class="chart-point" cx="262.36" cy="32.77" r="1.25" />
+            <circle class="chart-point" cx="264.06" cy="39.65" r="1.25" />
+            <circle class="chart-point" cx="264.52" cy="44.75" r="1.25" />
+            <circle class="chart-point" cx="264.79" cy="47.75" r="1.25" />
+            <circle class="chart-point" cx="265.31" cy="42.14" r="1.25" />
+            <circle class="chart-point" cx="266.21" cy="43.63" r="1.25" />
+            <circle class="chart-point" cx="267.25" cy="47.51" r="1.25" />
+            <circle class="chart-point" cx="267.64" cy="29.10" r="1.25" />
+            <circle class="chart-point" cx="268.47" cy="30.38" r="1.25" />
+            <circle class="chart-point" cx="270.00" cy="33.75" r="1.25" />
+            <circle class="chart-point" cx="270.08" cy="46.00" r="1.25" />
+            <circle class="chart-point" cx="271.35" cy="35.03" r="1.25" />
+            <circle class="chart-point" cx="273.13" cy="35.85" r="1.25" />
+            <circle class="chart-point" cx="273.26" cy="36.99" r="1.25" />
+            <circle class="chart-point" cx="273.52" cy="32.11" r="1.25" />
+            <circle class="chart-point" cx="273.76" cy="35.72" r="1.25" />
+            <circle class="chart-point" cx="274.32" cy="34.97" r="1.25" />
+            <circle class="chart-point" cx="277.25" cy="35.03" r="1.25" />
+            <circle class="chart-point" cx="277.38" cy="36.77" r="1.25" />
+            <circle class="chart-point" cx="278.19" cy="49.32" r="1.25" />
+            <circle class="chart-point" cx="278.62" cy="38.13" r="1.25" />
+            <circle class="chart-point" cx="279.05" cy="41.89" r="1.25" />
+            <circle class="chart-point" cx="279.38" cy="46.16" r="1.25" />
+            <circle class="chart-point" cx="280.51" cy="28.38" r="1.25" />
+            <circle class="chart-point" cx="281.55" cy="28.01" r="1.25" />
+            <circle class="chart-point" cx="281.58" cy="30.22" r="1.25" />
+            <circle class="chart-point" cx="282.15" cy="36.76" r="1.25" />
+            <circle class="chart-point" cx="282.27" cy="30.22" r="1.25" />
+            <circle class="chart-point" cx="283.02" cy="38.17" r="1.25" />
+            <circle class="chart-point" cx="283.22" cy="37.03" r="1.25" />
+            <circle class="chart-point" cx="283.52" cy="44.75" r="1.25" />
+            <circle class="chart-point" cx="283.63" cy="35.85" r="1.25" />
+            <circle class="chart-point" cx="283.71" cy="37.86" r="1.25" />
+            <circle class="chart-point" cx="283.86" cy="45.98" r="1.25" />
+            <circle class="chart-point" cx="284.11" cy="38.51" r="1.25" />
+            <circle class="chart-point" cx="284.25" cy="38.68" r="1.25" />
+            <circle class="chart-point" cx="284.42" cy="27.48" r="1.25" />
+            <circle class="chart-point" cx="284.83" cy="32.87" r="1.25" />
+            <circle class="chart-point" cx="284.87" cy="38.13" r="1.25" />
+            <circle class="chart-point" cx="285.22" cy="36.72" r="1.25" />
+            <circle class="chart-point" cx="285.49" cy="37.94" r="1.25" />
+            <circle class="chart-point" cx="285.89" cy="39.42" r="1.25" />
+            <circle class="chart-point" cx="286.16" cy="44.67" r="1.25" />
+            <circle class="chart-point" cx="288.69" cy="39.24" r="1.25" />
+            <circle class="chart-point" cx="289.22" cy="42.83" r="1.25" />
+            <circle class="chart-point" cx="289.97" cy="45.91" r="1.25" />
+            <circle class="chart-point" cx="290.47" cy="35.45" r="1.25" />
+            <circle class="chart-point" cx="290.50" cy="36.17" r="1.25" />
+            <circle class="chart-point" cx="290.66" cy="49.18" r="1.25" />
+            <circle class="chart-point" cx="290.83" cy="39.27" r="1.25" />
+            <circle class="chart-point" cx="291.47" cy="32.69" r="1.25" />
+            <circle class="chart-point" cx="291.55" cy="32.32" r="1.25" />
+            <circle class="chart-point" cx="291.56" cy="32.52" r="1.25" />
+            <circle class="chart-point" cx="291.67" cy="38.42" r="1.25" />
+            <circle class="chart-point" cx="292.75" cy="43.85" r="1.25" />
+            <circle class="chart-point" cx="294.53" cy="45.59" r="1.25" />
+            <circle class="chart-point" cx="295.32" cy="37.23" r="1.25" />
+            <circle class="chart-point" cx="297.23" cy="37.46" r="1.25" />
+            <circle class="chart-point" cx="297.82" cy="32.20" r="1.25" />
+            <circle class="chart-point" cx="298.05" cy="33.38" r="1.25" />
+            <circle class="chart-point" cx="298.32" cy="40.80" r="1.25" />
+            <circle class="chart-point" cx="298.74" cy="47.55" r="1.25" />
+            <circle class="chart-point" cx="299.29" cy="42.19" r="1.25" />
+            <circle class="chart-point" cx="299.41" cy="39.02" r="1.25" />
+            <circle class="chart-point" cx="299.81" cy="41.65" r="1.25" />
+            <circle class="chart-point" cx="300.17" cy="44.00" r="1.25" />
+            <circle class="chart-point" cx="300.30" cy="39.08" r="1.25" />
+            <circle class="chart-point" cx="300.54" cy="43.67" r="1.25" />
+            <circle class="chart-point" cx="301.60" cy="44.76" r="1.25" />
+            <circle class="chart-point" cx="301.94" cy="39.27" r="1.25" />
+            <circle class="chart-point" cx="303.66" cy="44.16" r="1.25" />
+            <circle class="chart-point" cx="305.21" cy="40.92" r="1.25" />
+            <circle class="chart-point" cx="305.47" cy="40.86" r="1.25" />
+            <circle class="chart-point" cx="305.81" cy="49.43" r="1.25" />
+            <circle class="chart-point" cx="306.00" cy="45.58" r="1.25" />
+            <circle class="chart-point" cx="306.00" cy="34.14" r="1.25" />
+            <circle class="chart-point" cx="306.70" cy="49.95" r="1.25" />
+            <circle class="chart-point" cx="307.69" cy="56.09" r="1.25" />
+            <circle class="chart-point" cx="307.99" cy="54.71" r="1.25" />
+            <circle class="chart-point" cx="308.31" cy="43.59" r="1.25" />
+            <circle class="chart-point" cx="308.96" cy="43.89" r="1.25" />
+            <circle class="chart-point" cx="311.05" cy="45.85" r="1.25" />
+            <circle class="chart-point" cx="311.13" cy="37.95" r="1.25" />
+            <circle class="chart-point" cx="313.24" cy="62.31" r="1.25" />
+            <circle class="chart-point" cx="313.38" cy="44.09" r="1.25" />
+            <circle class="chart-point" cx="314.67" cy="37.91" r="1.25" />
+            <circle class="chart-point" cx="318.25" cy="56.26" r="1.25" />
+            <circle class="chart-point" cx="318.53" cy="51.99" r="1.25" />
+            <circle class="chart-point" cx="318.97" cy="54.52" r="1.25" />
+            <circle class="chart-point" cx="319.08" cy="55.43" r="1.25" />
+            <circle class="chart-point" cx="319.91" cy="52.64" r="1.25" />
+            <circle class="chart-point" cx="320.18" cy="42.38" r="1.25" />
+            <circle class="chart-point" cx="320.60" cy="40.23" r="1.25" />
+            <circle class="chart-point" cx="321.90" cy="54.17" r="1.25" />
+            <circle class="chart-point" cx="321.92" cy="40.81" r="1.25" />
+            <circle class="chart-point" cx="323.75" cy="53.38" r="1.25" />
+            <circle class="chart-point" cx="324.39" cy="43.65" r="1.25" />
+            <circle class="chart-point" cx="326.05" cy="56.03" r="1.25" />
+            <circle class="chart-point" cx="326.15" cy="54.78" r="1.25" />
+            <circle class="chart-point" cx="326.80" cy="53.94" r="1.25" />
+            <circle class="chart-point" cx="327.58" cy="37.83" r="1.25" />
+            <circle class="chart-point" cx="328.77" cy="52.77" r="1.25" />
+            <circle class="chart-point" cx="328.78" cy="62.07" r="1.25" />
+            <circle class="chart-point" cx="328.86" cy="52.15" r="1.25" />
+            <circle class="chart-point" cx="329.37" cy="60.55" r="1.25" />
+            <circle class="chart-point" cx="329.62" cy="61.54" r="1.25" />
+            <circle class="chart-point" cx="329.69" cy="53.26" r="1.25" />
+            <circle class="chart-point" cx="330.75" cy="59.49" r="1.25" />
+            <circle class="chart-point" cx="331.30" cy="58.53" r="1.25" />
+            <circle class="chart-point" cx="332.21" cy="60.97" r="1.25" />
+            <circle class="chart-point" cx="332.24" cy="59.08" r="1.25" />
+            <circle class="chart-point" cx="332.26" cy="58.58" r="1.25" />
+            <circle class="chart-point" cx="332.27" cy="72.67" r="1.25" />
+            <circle class="chart-point" cx="332.48" cy="57.34" r="1.25" />
+            <circle class="chart-point" cx="332.79" cy="67.48" r="1.25" />
+            <circle class="chart-point" cx="335.32" cy="72.78" r="1.25" />
+            <circle class="chart-point" cx="336.20" cy="65.44" r="1.25" />
+            <circle class="chart-point" cx="336.92" cy="65.36" r="1.25" />
+            <circle class="chart-point" cx="337.45" cy="70.56" r="1.25" />
+            <circle class="chart-point" cx="338.29" cy="62.38" r="1.25" />
+            <circle class="chart-point" cx="339.19" cy="76.34" r="1.25" />
+            <circle class="chart-point" cx="339.29" cy="70.87" r="1.25" />
+            <circle class="chart-point" cx="340.23" cy="72.98" r="1.25" />
+            <circle class="chart-point" cx="341.57" cy="71.31" r="1.25" />
+            <circle class="chart-point" cx="341.96" cy="69.83" r="1.25" />
+            <circle class="chart-point" cx="342.48" cy="78.11" r="1.25" />
+            <circle class="chart-point" cx="342.95" cy="68.34" r="1.25" />
+            <circle class="chart-point" cx="343.29" cy="72.70" r="1.25" />
+            <circle class="chart-point" cx="344.47" cy="85.77" r="1.25" />
+            <circle class="chart-point" cx="345.69" cy="87.68" r="1.25" />
+            <circle class="chart-point" cx="345.88" cy="76.31" r="1.25" />
+            <circle class="chart-point" cx="347.87" cy="80.08" r="1.25" />
+            <circle class="chart-point" cx="349.64" cy="81.71" r="1.25" />
+            <circle class="chart-point" cx="351.08" cy="83.19" r="1.25" />
+            <circle class="chart-point" cx="351.72" cy="82.55" r="1.25" />
+            <path class="chart-local-left" d="M 43.00 85.16 L 43.89 86.65 L 44.78 88.12 L 45.67 89.57 L 46.56 91.00 L 47.45 92.42 L 48.34 93.81 L 49.23 95.19 L 50.12 96.55 L 51.01 97.89 L 51.90 99.21 L 52.79 100.52 L 53.69 101.80 L 54.58 103.07 L 55.47 104.32 L 56.36 105.55 L 57.25 106.76 L 58.14 107.95 L 59.03 109.13 L 59.92 110.28 L 60.81 111.42 L 61.70 112.54 L 62.59 113.64 L 63.48 114.72 L 64.37 115.78 L 65.26 116.83 L 66.15 117.85 L 67.04 118.86 L 67.93 119.85 L 68.82 120.82 L 69.71 121.77 L 70.60 122.71 L 71.49 123.62 L 72.38 124.52 L 73.27 125.40 L 74.16 126.26 L 75.06 127.10 L 75.95 127.92 L 76.84 128.73 L 77.73 129.51 L 78.62 130.28 L 79.51 131.03 L 80.40 131.76 L 81.29 132.47 L 82.18 133.16 L 83.07 133.84 L 83.96 134.49 L 84.85 135.13 L 85.74 135.75 L 86.63 136.35 L 87.52 136.93 L 88.41 137.49 L 89.30 138.04 L 90.19 138.56 L 91.08 139.07 L 91.97 139.56 L 92.86 140.03 L 93.75 140.49 L 94.64 140.92 L 95.54 141.33 L 96.43 141.73 L 97.32 142.11 L 98.21 142.47 L 99.10 142.81 L 99.99 143.13 L 100.88 143.44 L 101.77 143.72 L 102.66 143.99 L 103.55 144.24 L 104.44 144.47 L 105.33 144.68 L 106.22 144.88 L 107.11 145.05 L 108.00 145.21 L 108.89 145.34 L 109.78 145.46 L 110.67 145.56 L 111.56 145.65 L 112.45 145.71 L 113.34 145.75 L 114.23 145.78 L 115.12 145.79 L 116.01 145.78 L 116.91 145.75 L 117.80 145.70 L 118.69 145.64 L 119.58 145.55 L 120.47 145.45 L 121.36 145.33 L 122.25 145.19 L 123.14 145.03 L 124.03 144.85 L 124.92 144.66 L 125.81 144.44 L 126.70 144.21 L 127.59 143.96 L 128.48 143.69 L 129.37 143.40 L 130.26 143.10 L 131.15 142.77 L 132.04 142.43 L 132.93 142.07 L 133.82 141.69 L 134.71 141.29 L 135.60 140.87 L 136.49 140.43 L 137.39 139.98 L 138.28 139.50 L 139.17 139.01 L 140.06 138.50 L 140.95 137.97 L 141.84 137.43 L 142.73 136.86 L 143.62 136.28 L 144.51 135.67 L 145.40 135.05 L 146.29 134.41 L 147.18 133.76 L 148.07 133.08 L 148.96 132.38 L 149.85 131.67" />
+            <path class="chart-local-middle" d="M 149.85 107.83 L 150.68 108.10 L 151.51 108.36 L 152.35 108.60 L 153.18 108.84 L 154.01 109.07 L 154.84 109.29 L 155.67 109.50 L 156.51 109.70 L 157.34 109.89 L 158.17 110.06 L 159.00 110.23 L 159.83 110.39 L 160.66 110.54 L 161.50 110.68 L 162.33 110.80 L 163.16 110.92 L 163.99 111.03 L 164.82 111.13 L 165.65 111.22 L 166.49 111.29 L 167.32 111.36 L 168.15 111.42 L 168.98 111.47 L 169.81 111.50 L 170.65 111.53 L 171.48 111.55 L 172.31 111.56 L 173.14 111.55 L 173.97 111.54 L 174.80 111.52 L 175.64 111.48 L 176.47 111.44 L 177.30 111.39 L 178.13 111.32 L 178.96 111.25 L 179.80 111.17 L 180.63 111.08 L 181.46 110.97 L 182.29 110.86 L 183.12 110.73 L 183.95 110.60 L 184.79 110.46 L 185.62 110.30 L 186.45 110.14 L 187.28 109.97 L 188.11 109.78 L 188.94 109.59 L 189.78 109.38 L 190.61 109.17 L 191.44 108.95 L 192.27 108.71 L 193.10 108.47 L 193.94 108.21 L 194.77 107.95 L 195.60 107.67 L 196.43 107.39 L 197.26 107.10 L 198.09 106.79 L 198.93 106.48 L 199.76 106.15 L 200.59 105.82 L 201.42 105.47 L 202.25 105.12 L 203.09 104.75 L 203.92 104.38 L 204.75 103.99 L 205.58 103.60 L 206.41 103.19 L 207.24 102.78 L 208.08 102.35 L 208.91 101.91 L 209.74 101.47 L 210.57 101.01 L 211.40 100.55 L 212.23 100.07 L 213.07 99.59 L 213.90 99.09 L 214.73 98.59 L 215.56 98.07 L 216.39 97.54 L 217.23 97.01 L 218.06 96.46 L 218.89 95.90 L 219.72 95.34 L 220.55 94.76 L 221.38 94.18 L 222.22 93.58 L 223.05 92.97 L 223.88 92.36 L 224.71 91.73 L 225.54 91.09 L 226.37 90.45 L 227.21 89.79 L 228.04 89.12 L 228.87 88.45 L 229.70 87.76 L 230.53 87.06 L 231.37 86.36 L 232.20 85.64 L 233.03 84.91 L 233.86 84.17 L 234.69 83.43 L 235.52 82.67 L 236.36 81.90 L 237.19 81.12 L 238.02 80.34 L 238.85 79.54 L 239.68 78.73 L 240.52 77.91 L 241.35 77.09 L 242.18 76.25 L 243.01 75.40 L 243.84 74.54 L 244.67 73.67 L 245.51 72.80 L 246.34 71.91 L 247.17 71.01 L 248.00 70.10 L 248.83 69.18 L 249.66 68.25" />
+            <path class="chart-local-right" d="M 249.66 48.98 L 250.52 48.42 L 251.37 47.87 L 252.22 47.33 L 253.08 46.81 L 253.93 46.31 L 254.78 45.82 L 255.63 45.34 L 256.49 44.88 L 257.34 44.43 L 258.19 44.00 L 259.05 43.58 L 259.90 43.18 L 260.75 42.79 L 261.60 42.42 L 262.46 42.06 L 263.31 41.71 L 264.16 41.38 L 265.02 41.07 L 265.87 40.77 L 266.72 40.48 L 267.57 40.21 L 268.43 39.95 L 269.28 39.71 L 270.13 39.48 L 270.98 39.27 L 271.84 39.07 L 272.69 38.88 L 273.54 38.71 L 274.40 38.56 L 275.25 38.42 L 276.10 38.29 L 276.95 38.18 L 277.81 38.08 L 278.66 38.00 L 279.51 37.93 L 280.37 37.88 L 281.22 37.84 L 282.07 37.82 L 282.92 37.81 L 283.78 37.81 L 284.63 37.83 L 285.48 37.86 L 286.33 37.91 L 287.19 37.98 L 288.04 38.05 L 288.89 38.15 L 289.75 38.25 L 290.60 38.37 L 291.45 38.51 L 292.30 38.66 L 293.16 38.83 L 294.01 39.01 L 294.86 39.20 L 295.72 39.41 L 296.57 39.63 L 297.42 39.87 L 298.27 40.12 L 299.13 40.39 L 299.98 40.67 L 300.83 40.97 L 301.69 41.28 L 302.54 41.61 L 303.39 41.95 L 304.24 42.30 L 305.10 42.67 L 305.95 43.05 L 306.80 43.45 L 307.65 43.86 L 308.51 44.29 L 309.36 44.73 L 310.21 45.19 L 311.07 45.66 L 311.92 46.15 L 312.77 46.65 L 313.62 47.16 L 314.48 47.69 L 315.33 48.24 L 316.18 48.80 L 317.04 49.37 L 317.89 49.96 L 318.74 50.56 L 319.59 51.18 L 320.45 51.81 L 321.30 52.45 L 322.15 53.11 L 323.01 53.79 L 323.86 54.48 L 324.71 55.18 L 325.56 55.90 L 326.42 56.64 L 327.27 57.38 L 328.12 58.15 L 328.97 58.92 L 329.83 59.72 L 330.68 60.52 L 331.53 61.34 L 332.39 62.18 L 333.24 63.03 L 334.09 63.89 L 334.94 64.77 L 335.80 65.67 L 336.65 66.57 L 337.50 67.50 L 338.36 68.43 L 339.21 69.39 L 340.06 70.35 L 340.91 71.33 L 341.77 72.33 L 342.62 73.34 L 343.47 74.37 L 344.32 75.41 L 345.18 76.46 L 346.03 77.53 L 346.88 78.61 L 347.74 79.71 L 348.59 80.82 L 349.44 81.95 L 350.29 83.09 L 351.15 84.25 L 352.00 85.42" />
+            <path class="chart-global" d="M 43.00 140.52 L 45.57 140.09 L 48.15 139.65 L 50.72 139.21 L 53.30 138.75 L 55.88 138.29 L 58.45 137.81 L 61.03 137.33 L 63.60 136.84 L 66.18 136.34 L 68.75 135.83 L 71.32 135.31 L 73.90 134.78 L 76.47 134.25 L 79.05 133.70 L 81.62 133.15 L 84.20 132.59 L 86.78 132.02 L 89.35 131.44 L 91.93 130.85 L 94.50 130.25 L 97.08 129.64 L 99.65 129.03 L 102.22 128.40 L 104.80 127.77 L 107.38 127.13 L 109.95 126.48 L 112.53 125.82 L 115.10 125.15 L 117.67 124.47 L 120.25 123.78 L 122.83 123.09 L 125.40 122.38 L 127.97 121.67 L 130.55 120.95 L 133.12 120.22 L 135.70 119.48 L 138.28 118.73 L 140.85 117.97 L 143.43 117.20 L 146.00 116.43 L 148.57 115.64 L 151.15 114.85 L 153.72 114.05 L 156.30 113.24 L 158.88 112.42 L 161.45 111.59 L 164.03 110.75 L 166.60 109.91 L 169.18 109.05 L 171.75 108.19 L 174.32 107.31 L 176.90 106.43 L 179.47 105.54 L 182.05 104.64 L 184.62 103.73 L 187.20 102.82 L 189.78 101.89 L 192.35 100.95 L 194.93 100.01 L 197.50 99.06 L 200.07 98.10 L 202.65 97.13 L 205.22 96.15 L 207.80 95.16 L 210.38 94.16 L 212.95 93.15 L 215.53 92.14 L 218.10 91.12 L 220.68 90.08 L 223.25 89.04 L 225.82 87.99 L 228.40 86.93 L 230.97 85.86 L 233.55 84.79 L 236.12 83.70 L 238.70 82.61 L 241.28 81.50 L 243.85 80.39 L 246.43 79.27 L 249.00 78.14 L 251.57 77.00 L 254.15 75.85 L 256.73 74.69 L 259.30 73.53 L 261.88 72.35 L 264.45 71.17 L 267.02 69.98 L 269.60 68.78 L 272.18 67.57 L 274.75 66.35 L 277.32 65.12 L 279.90 63.88 L 282.48 62.64 L 285.05 61.38 L 287.62 60.12 L 290.20 58.85 L 292.77 57.56 L 295.35 56.27 L 297.93 54.98 L 300.50 53.67 L 303.07 52.35 L 305.65 51.03 L 308.23 49.69 L 310.80 48.35 L 313.38 47.00 L 315.95 45.64 L 318.52 44.27 L 321.10 42.89 L 323.68 41.50 L 326.25 40.10 L 328.82 38.70 L 331.40 37.28 L 333.98 35.86 L 336.55 34.43 L 339.12 32.99 L 341.70 31.54 L 344.27 30.08 L 346.85 28.61 L 349.43 27.13 L 352.00 25.65" />
+            </g>
+            </svg>
+            <img class="desktop-trend-chart" src="outputs/comparison_plot.png"
+            alt="กราฟแสดงจุดข้อมูลและเส้นทำนาย: เส้น Local OLS สามช่วงตามสี และเส้นประสีแดงของ Global OLS ที่เส้นเดียว"
+            width="1980" height="1170" loading="lazy">
+          </div>
+          <figcaption>
+            <span class="legend orange">Local OLS ช่วงซ้าย</span><span class="legend">Local OLS ช่วงกลาง</span><span
+              class="legend green">Local OLS ช่วงขวา</span><span class="legend dashed">Global OLS</span><span
+              class="legend dot">จุดข้อมูล</span>
+          </figcaption>
+          <p class="chart-caveat">เส้น Local OLS ถูก fit แยกกัน จึงอาจมีรอยต่อเมื่อเปลี่ยนกลุ่ม ส่วนเส้น Global OLS
+            เป็นสมการเดียวตลอดช่วง</p>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="method">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="section-kicker">วิธีทำงาน</p>
+          <h2>แบ่งก่อน แล้วค่อยอธิบายแต่ละส่วน</h2>
+          <p>แบบจำลองผสมต่อการจัดกลุ่มที่ไม่ใช้คำตอบ เข้ากับสมการพหุนามที่อ่านค่าได้</p>
+        </div>
+        <div class="steps">
+          <article class="step">
+            <h3>เตรียมข้อมูล</h3>
+            <p>สร้างข้อมูลสังเคราะห์ 450 จุด โดยแนวโน้มเปลี่ยนไปสามช่วงและมีสัญญาณรบกวน</p><span class="mini-math">ฝึก
+              315 · ทดสอบ 135</span>
+          </article>
+          <article class="step">
+            <h3>แบ่งเป็น 3 กลุ่ม</h3>
+            <p>K-Means ใช้เฉพาะตำแหน่ง x เพื่อแบ่งช่วงข้อมูล ศูนย์กลางกลุ่มหาได้จากชุดฝึก</p><span class="mini-math">k =
+              3</span>
+          </article>
+          <article class="step">
+            <h3>เรียนสมการรายกลุ่ม</h3>
+            <p>แต่ละกลุ่มมีสมการกำลังสองของตัวเอง ช่วยให้ความชันและความโค้งต่างกันได้</p><span class="mini-math">ŷ = β₀
+              + β₁x + β₂x²</span>
+          </article>
+          <article class="step">
+            <h3>ทำนายและเปรียบเทียบ</h3>
+            <p>ข้อมูลใหม่ถูกส่งไปยังกลุ่มที่ใกล้ที่สุด แล้วใช้สมการของกลุ่มนั้น เปรียบเทียบกับ OLS สมการเดียว</p><span
+              class="mini-math">train/test = 70/30</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section white">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="section-kicker">สมการที่เรียนรู้</p>
+          <h2>แต่ละบริเวณมีรูปแบบของตัวเอง</h2>
+          <p>กลุ่มเรียงจากศูนย์กลาง x ด้านซ้ายไปด้านขวา จำนวนตัวอย่างคือข้อมูลฝึกของแต่ละกลุ่ม</p>
+        </div>
+        <div class="equation-grid">
+          <article class="equation"><span class="equation-tag">ช่วงซ้าย · ศูนย์กลาง x = −3.8389</span>
+            <div class="formula">ŷ = 2.0085 + 3.4896x<br>+ 0.5451x²</div>
+            <p>ข้อมูลฝึก 102 ตัวอย่าง · กลุ่ม 1</p>
+          </article>
+          <article class="equation"><span class="equation-tag">ช่วงกลาง · ศูนย์กลาง x = 0.1380</span>
+            <div class="formula">ŷ = −0.8457 + 0.6594x<br>+ 0.3395x²</div>
+            <p>ข้อมูลฝึก 106 ตัวอย่าง · กลุ่ม 0</p>
+          </article>
+          <article class="equation equation-right"><span class="equation-tag">ช่วงขวา · ศูนย์กลาง x = 3.9136</span>
+            <div class="formula">ŷ = −1.1371 + 3.1088x<br>− 0.4678x²</div>
+            <p>ข้อมูลฝึก 107 ตัวอย่าง · กลุ่ม 2</p>
+          </article>
+        </div>
+        <div class="global-equation">
+          <p><strong>ส่วนสมการเดียว:</strong> Global OLS ใช้ค่าสัมประสิทธิ์ชุดเดียวกับข้อมูลทุกช่วง</p>
+          <div class="formula">ŷ = −0.2857 + 0.6741x + 0.0312x²</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="interpretation">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="section-kicker">เลือกใช้อย่างเข้าใจ</p>
+          <h2>คะแนนดีขึ้น แต่มีเงื่อนไขที่ต้องพิจารณา</h2>
+          <p>แบบจำลองที่เหมาะสมขึ้นกับโครงสร้างข้อมูลและสิ่งที่ต้องการอธิบาย</p>
+        </div>
+        <div class="tradeoff-grid">
+          <article class="tradeoff hybrid">
+            <h3>Hybrid K-Means + Local OLS</h3>
+            <ul>
+              <li>ปรับสมการให้เข้ากับแนวโน้มหลายช่วง</li>
+              <li>อธิบายได้เป็นรายกลุ่ม โดยดูสมการของแต่ละกลุ่ม</li>
+              <li>ต้องมีข้อมูลเพียงพอในทุกกลุ่ม</li>
+              <li>ค่าทำนายอาจสะดุดตรงรอยต่อ และเพิ่มความซับซ้อนเมื่อเพิ่มจำนวนกลุ่ม</li>
+            </ul>
+          </article>
+          <article class="tradeoff global">
+            <h3>Global Polynomial OLS</h3>
+            <ul>
+              <li>สื่อสารง่าย เพราะมีสมการเดียว</li>
+              <li>ใช้ข้อมูลฝึกทั้งหมดร่วมกัน</li>
+              <li>เส้นต่อเนื่องตลอดช่วง</li>
+              <li>อาจตามรูปแบบหลายช่วงไม่ทัน หากสมการเดียวอธิบายข้อมูลได้ไม่พอ</li>
+            </ul>
+          </article>
+        </div>
+        <aside class="caution"><span class="caution-icon" aria-hidden="true">i</span>
+          <p><strong>ขอบเขตของข้อสรุป</strong> ตัวเลขนี้มาจากข้อมูลสังเคราะห์และการแบ่งชุดทดสอบเพียงครั้งเดียว
+            ยังไม่ยืนยันผลกับข้อมูลจริง ในงานจริงควรใช้ cross-validation บนชุดฝึกเพื่อเลือกจำนวนกลุ่มและดีกรีพหุนาม
+            แล้วใช้ชุดทดสอบประเมินครั้งสุดท้าย</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section white" id="files">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="section-kicker">สำรวจโครงงานต่อ</p>
+          <h2>เปิดดูข้อมูลและผลลัพธ์ต้นฉบับ</h2>
+          <p>ไฟล์เหล่านี้สร้างจากโปรแกรมเดียวกับที่ใช้ในการทดลอง</p>
+        </div>
+        <div class="download-grid">
+          <a class="download" href="outputs/dataset.csv"
+            download><small>ชุดข้อมูล</small><strong>dataset.csv</strong><span aria-hidden="true">↓</span></a>
+          <a class="download" href="outputs/metrics.csv"
+            download><small>คะแนนเปรียบเทียบ</small><strong>metrics.csv</strong><span aria-hidden="true">↓</span></a>
+          <a class="download" href="outputs/local_coefficients.csv"
+            download><small>สมการรายกลุ่ม</small><strong>local_coefficients.csv</strong><span
+              aria-hidden="true">↓</span></a>
+          <a class="download" href="outputs/results.json" download><small>ผลและสมการ
+              Global</small><strong>results.json</strong><span aria-hidden="true">↓</span></a>
+          <a class="download" href="hybrid_kmeans_ols.py"
+            download><small>โปรแกรมต้นฉบับ</small><strong>hybrid_kmeans_ols.py</strong><span
+              aria-hidden="true">↓</span></a>
+          <a class="download" href="รายงานแบบจำลองถดถอยผสม.pdf" target="_blank" rel="noreferrer"><small>รายงานฉบับเต็ม</small><strong>เปิดอ่าน PDF</strong><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="run-panel">
+          <div>
+            <h3>อยากทำซ้ำด้วย Python?</h3>
+            <p>ติดตั้งไลบรารีตามรายการของโครงงาน แล้วสั่งรันไฟล์หลัก</p>
+          </div>
+          <pre><code>python3 -m pip install -r requirements.txt
+python3 hybrid_kmeans_ols.py</code></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="wrap">
+      <section class="footer-team" aria-labelledby="footer-team-title">
+        <p class="footer-team-title" id="footer-team-title">สมาชิกกลุ่ม</p>
+        <ul class="footer-team-list">
+          <li>นางสาวชารินา แยน่า</li>
+          <li>นายอนัส ยะโยะ</li>
+          <li>นางสาวพีรดาว เจ๊ะเละ</li>
+          <li>นายอับดุลเลาะห์ สาหาด</li>
+        </ul>
+      </section>
+      <div class="footer-inner">
+        <p>แบบจำลองถดถอยผสม · K-Means + Local OLS</p>
+        <p>โครงงานสาธิตด้วยข้อมูลสังเคราะห์เพื่อการเรียนรู้ · <a href="https://github.com/naughtyduk/liquidGL"
+            target="_blank" rel="noreferrer">แรงบันดาลใจ Liquid Glass</a></p>
+      </div>
+    </div>
+  </footer>
+  <script>
+    const mobileMenu = document.querySelector(".mobile-menu");
+
+    mobileMenu?.querySelectorAll(".mobile-menu-panel a").forEach((link) => {
+      link.addEventListener("click", () => {
+        mobileMenu.open = false;
+      });
+    });
+
+    document.addEventListener("click", (event) => {
+      if (mobileMenu?.open && !mobileMenu.contains(event.target)) {
+        mobileMenu.open = false;
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && mobileMenu?.open) {
+        mobileMenu.open = false;
+        mobileMenu.querySelector("summary").focus();
+      }
+    });
+  </script>
+</body>
+
+</html>
